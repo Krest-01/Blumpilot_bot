@@ -1,7 +1,9 @@
 import TelegramBot from 'node-telegram-bot-api';
 import fetch from 'node-fetch';
 
+const play = 15;
 const botToken = "6301224962:AAH0xlCXPsxeUpBAaN8vJqiDhwOO7b-C9Yw"; // Replace with your Telegram Bot Token
+
 const bot = new TelegramBot(botToken, { polling: true });
 
 // Map to store user tokens, using chat IDs as keys
@@ -12,39 +14,10 @@ async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Function to get the number of available games with added logging
-async function getAvailableGameCount(authen) {
-  try {
-    const response = await fetch('https://game-domain.blum.codes/api/v1/game/available', { // Verify this endpoint
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'authorization': authen,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to retrieve available games: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    console.log('Available games API response:', data); // Log the full response for inspection
-
-    // Check and adjust the path to the number of available games
-    return data.availableGamesCount || 0; // Modify based on actual response format
-  } catch (error) {
-    console.error('Error fetching available games:', error);
-    return 0;
-  }
-}
-
-// Main function to play and claim all available games
+// Main function to play and claim game
 async function playAndClaimGame(chatId, authen) {
-  const gameCount = await getAvailableGameCount(authen);
-  bot.sendMessage(chatId, ` - Found ${gameCount} games to play.`);
-
-  for (let i = 0; i < gameCount; i++) {
-    bot.sendMessage(chatId, ` - ${i + 1}. Start Play game...`);
+  for (let i = 0; i < play; i++) {
+    bot.sendMessage(chatId, ` - ${i}. Start Play game...`);
     const _points = Math.floor(Math.random() * (120 - 80 + 1)) + 110;
 
     const headers = {
@@ -147,6 +120,7 @@ bot.on('callback_query', (query) => {
       FAQ:
       - **How to get a Blum access token?**
   
+
         Go to : https://desktop.telegram.org
 
         - Install
