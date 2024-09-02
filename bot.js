@@ -1,7 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 import fetch from 'node-fetch';
 
-const play = 15;
+const play = 5;
 const botToken = "6301224962:AAH0xlCXPsxeUpBAaN8vJqiDhwOO7b-C9Yw"; // Replace with your Telegram Bot Token
 
 const bot = new TelegramBot(botToken, { polling: true });
