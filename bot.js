@@ -1,9 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 import fetch from 'node-fetch';
 
-const play = 5;
 const botToken = "6301224962:AAH0xlCXPsxeUpBAaN8vJqiDhwOO7b-C9Yw"; // Replace with your Telegram Bot Token
-
 const bot = new TelegramBot(botToken, { polling: true });
 
 // Map to store user tokens, using chat IDs as keys
@@ -14,10 +12,36 @@ async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Main function to play and claim game
+// Function to get the number of available games
+async function getAvailableGameCount(authen) {
+  try {
+    const response = await fetch('https://game-domain.blum.codes/api/v1/game/available', { // Replace with the correct endpoint
+      method: 'GET',
+      headers: {
+        'accept': 'application/json',
+        'authorization': authen,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to retrieve available games: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.availableGamesCount || 0; // Adjust based on the actual API response structure
+  } catch (error) {
+    console.error('Error fetching available games:', error);
+    return 0;
+  }
+}
+
+// Main function to play and claim all available games
 async function playAndClaimGame(chatId, authen) {
-  for (let i = 0; i < play; i++) {
-    bot.sendMessage(chatId, ` - ${i}. Start Play game...`);
+  const gameCount = await getAvailableGameCount(authen);
+  bot.sendMessage(chatId, ` - Found ${gameCount} games to play.`);
+
+  for (let i = 0; i < gameCount; i++) {
+    bot.sendMessage(chatId, ` - ${i + 1}. Start Play game...`);
     const _points = Math.floor(Math.random() * (120 - 80 + 1)) + 110;
 
     const headers = {
@@ -120,7 +144,6 @@ bot.on('callback_query', (query) => {
       FAQ:
       - **How to get a Blum access token?**
   
-
         Go to : https://desktop.telegram.org
 
         - Install
