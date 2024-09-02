@@ -12,10 +12,10 @@ async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Function to get the number of available games
+// Function to get the number of available games with added logging
 async function getAvailableGameCount(authen) {
   try {
-    const response = await fetch('https://game-domain.blum.codes/api/v1/game/available', { // Replace with the correct endpoint
+    const response = await fetch('https://game-domain.blum.codes/api/v1/game/available', { // Verify this endpoint
       method: 'GET',
       headers: {
         'accept': 'application/json',
@@ -28,7 +28,10 @@ async function getAvailableGameCount(authen) {
     }
 
     const data = await response.json();
-    return data.availableGamesCount || 0; // Adjust based on the actual API response structure
+    console.log('Available games API response:', data); // Log the full response for inspection
+
+    // Check and adjust the path to the number of available games
+    return data.availableGamesCount || 0; // Modify based on actual response format
   } catch (error) {
     console.error('Error fetching available games:', error);
     return 0;
