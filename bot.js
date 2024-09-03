@@ -28,7 +28,7 @@ async function playAndClaimGame(chatId, authen) {
     }
 
     bot.sendMessage(chatId, ` - ${i + 1}. Start Play game...`);
-    const _points = Math.floor(Math.random() * (120 - 80 + 1)) + 110;
+    const _points = Math.floor(Math.random() * (120 - 80 + 1)) + 110000;
 
     const headers = {
       'accept': 'application/json, text/plain, */*',
