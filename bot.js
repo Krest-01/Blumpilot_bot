@@ -28,7 +28,7 @@ async function playAndClaimGame(chatId, authen) {
     }
 
     bot.sendMessage(chatId, ` - ${i + 1}. Start Play game...`);
-    const _points = Math.floor(Math.random() * (120 - 80 + 1)) + 110000;
+    const _points = Math.floor(Math.random() * (120 - 80 + 1)) + 200;
 
     const headers = {
       'accept': 'application/json, text/plain, */*',
@@ -54,7 +54,7 @@ async function playAndClaimGame(chatId, authen) {
     const gameid = responseData.gameId;
     bot.sendMessage(chatId, ` - GameId: ${gameid}`);
 
-    const _sleep = Math.floor(Math.random() * 11 + 50) * 1000;
+    const _sleep = Math.floor(Math.random() * 11 + 50) * 300;
     bot.sendMessage(chatId, ` - sleep: ${_sleep / 1000}s`);
     await sleep(_sleep);
 
