@@ -1,54 +1,30 @@
 import TelegramBot from 'node-telegram-bot-api';
 import fetch from 'node-fetch';
 
+const play = 5; // Number of games to play
 const botToken = "6301224962:AAH0xlCXPsxeUpBAaN8vJqiDhwOO7b-C9Yw"; // Replace with your Telegram Bot Token
+
 const bot = new TelegramBot(botToken, { polling: true });
 
-// Map to store user tokens and connection status
+// Maps to store user tokens and connection status
 const userTokens = {};
-const userActive = {}; // To track if a user is active or disconnected
+const userActive = {};
 
 // Sleep function
 async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Function to get the number of available games with added logging
-async function getAvailableGameCount(authen) {
-  try {
-    const response = await fetch('https://game-domain.blum.codes/api/v1/game/available', { // Verify this endpoint
-      method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'authorization': authen,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to retrieve available games: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    console.log('Available games API response:', data); // Log the full response for inspection
-
-    // Check and adjust the path to the number of available games
-    return data.availableGamesCount || 0; // Modify based on actual response format
-  } catch (error) {
-    console.error('Error fetching available games:', error);
-    return 0;
-  }
-}
-
-// Main function to play and claim all available games
+// Main function to play and claim game
 async function playAndClaimGame(chatId, authen) {
-  const gameCount = await getAvailableGameCount(authen);
-  bot.sendMessage(chatId, ` - Found ${gameCount} games to play.`);
+  // Set user as active
+  userActive[chatId] = true;
 
-  for (let i = 0; i < gameCount; i++) {
+  for (let i = 0; i < play; i++) {
     // Check if the user has disconnected
     if (!userActive[chatId]) {
       bot.sendMessage(chatId, " - Disconnected. Stopping the game play.");
-      return;
+      return; // Exit the function if the user is disconnected
     }
 
     bot.sendMessage(chatId, ` - ${i + 1}. Start Play game...`);
@@ -81,12 +57,6 @@ async function playAndClaimGame(chatId, authen) {
     const _sleep = Math.floor(Math.random() * 11 + 50) * 1000;
     bot.sendMessage(chatId, ` - sleep: ${_sleep / 1000}s`);
     await sleep(_sleep);
-
-    // Check again before claiming the game
-    if (!userActive[chatId]) {
-      bot.sendMessage(chatId, " - Disconnected. Stopping the game play.");
-      return;
-    }
 
     headers["content-type"] = 'application/json';
     delete headers["content-length"];
@@ -145,14 +115,13 @@ bot.on('callback_query', (query) => {
       }
 
       userTokens[chatId] = token;
-      userActive[chatId] = true; // Mark the user as active
       bot.sendMessage(chatId, 'Token received! Starting the play and claim process...');
       playAndClaimGame(chatId, token);
     });
   } else if (action === 'disconnect') {
     if (userTokens[chatId]) {
+      userActive[chatId] = false; // Set user as inactive
       delete userTokens[chatId];
-      userActive[chatId] = false; // Mark the user as inactive to stop the loop
       bot.sendMessage(chatId, 'Disconnected. All connections have been cancelled.');
     } else {
       bot.sendMessage(chatId, 'You are not connected.');
