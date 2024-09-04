@@ -54,7 +54,7 @@ async function playAndClaimGame(chatId, authen) {
     const gameid = responseData.gameId;
     bot.sendMessage(chatId, ` - GameId: ${gameid}`);
 
-    const _sleep = Math.floor(Math.random() * 11 + 50) * 300;
+    const _sleep = Math.floor(Math.random() * 11 + 50) * 1000;
     bot.sendMessage(chatId, ` - sleep: ${_sleep / 1000}s`);
     await sleep(_sleep);
 
