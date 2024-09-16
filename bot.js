@@ -72,9 +72,9 @@ async function playAndClaimGame(chatId, authen) {
     const claimText = await claim.text();
     bot.sendMessage(chatId, ` - Play status: ${claimText}. Points: ${_points}`);
 
-    const _sleep2 = Math.floor(Math.random() * 6 + 15) * 1000;
-    bot.sendMessage(chatId, ` - sleep: ${_sleep2 / 1000}s`);
-    await sleep(_sleep2);
+    // const _sleep2 = Math.floor(Math.random() * 6 + 15) * 1000;
+    // bot.sendMessage(chatId, ` - sleep: ${_sleep2 / 1000}s`);
+    // await sleep(_sleep2);
   }
   bot.sendMessage(chatId, " - [ DONE ALL ] ");
 }
